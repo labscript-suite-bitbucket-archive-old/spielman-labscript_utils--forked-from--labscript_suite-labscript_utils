@@ -8,6 +8,7 @@ Created on Thu May 21 09:35:44 2015
 import os
 import sys
 import ast
+import linecache
 
 import h5_lock, h5py
 
@@ -87,6 +88,9 @@ class attached_function(object):
             raise TypeError('Keyword argument list can contain only Python literals')
             
         try:
+            # This is a bug workaround for a cache that is present that blocks
+            # updates to these functions!
+            linecache.clearcache()
             function_source = inspect.getsource(function)
         except Exception:
             raise TypeError('Could not get source code of %s %s. '%(type(function).__name__, repr(function)) + 
@@ -132,7 +136,7 @@ def attach_function(function, hdf5_file, groupname='post_process', args=None, kw
  
 
 class SavedFunction(object):
-    def __init__(self, dataset):
+    def __init__(self, h5_filename, dataset):
         """provides a callable from the function saved in the provided dataset.
         
         filename: The name of the (currently open) h5 file the 
@@ -161,7 +165,7 @@ class SavedFunction(object):
         self.function_name = function_name
         self.function_args = function_args
         self.function_kwargs = function_kwargs
-        self.h5_filename = os.path.abspath(dataset.file.filename)
+        self.h5_filename = h5_filename
         functools.update_wrapper(self, function)
         
     def __call__(self, *args, **kwargs):
@@ -215,7 +219,7 @@ def get_saved_function(filename, name, groupname='post_process'):
     with h5py.File(filename, "r") as f:
         grp = f.getitem(groupname)
         dataset = grp.getitem(name)
-        saved_function = SavedFunction(dataset)
+        saved_function = SavedFunction(filename, dataset)
     
     return saved_function
     
@@ -234,7 +238,6 @@ def get_all_saved_functions(filename, groupname='post_process'):
         grp = f[groupname]
         
         for dataset in grp.values():
-#            saved_functions += [SavedFunction(dataset),]
-            saved_functions += [dataset]
+            saved_functions += [SavedFunction(filename, dataset)]
 
     return saved_functions
