@@ -150,16 +150,20 @@ class timer():
     def wait(self):
         """
         wait until timer expires
+        
+        returns the amount of time waited in this function
         """
         
         # if we are not timing right now, just return
         if not self._timing:
-            return
+            return 0.0
         else:
+            start_time = time.time()
             response = self._timing_queue.get()
             self._timer_done()
             if response == 'done':
-                return
+                return time.time() - start_time
             else:
                 raise RuntimeError('invalid response from timer worker')
+                return 0.0
                  
