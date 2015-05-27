@@ -20,14 +20,24 @@ def SleepUntil(delay, timing_queue):
     timing_queue.put("done")
 
 def Countdown(delay, countdown_queue, interval, countdown_mode):
+    """
+    This is for sending a timing stream to a queue, for example
+    for making a progress bar.  interval is the time between updates
+    to the queue.
+    """
     if interval > delay:
         interval = delay
     
     num = int(delay / interval)
+    true_interval = delay / num
 
-    final_time = time.time() + delay
+    initial_time = time.time()
+    final_time = initial_time + delay
     for i in range(num):
-        time.sleep(interval)
+        sleep_time = max(
+            (i+1)*true_interval - (time.time()-initial_time), 
+            0)
+        time.sleep(sleep_time)
         remainig_time = max(final_time - time.time(),0)
         if countdown_mode == 'precent_remaining':
             remainig_time = 100*remainig_time/delay
