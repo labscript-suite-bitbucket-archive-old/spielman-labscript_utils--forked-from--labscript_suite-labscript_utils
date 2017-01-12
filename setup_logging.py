@@ -15,7 +15,7 @@ import sys, os
 import logging, logging.handlers
 import __main__
 
-def setup_logging(program_name, log_level = logging.DEBUG, terminal_level = logging.INFO):
+def setup_logging(program_name, log_level = logging.INFO, terminal_level = logging.INFO):
     logger = logging.getLogger(program_name)
     
     main_path = __main__.__file__ if hasattr(__main__, '__file__') else __file__
