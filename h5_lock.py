@@ -22,19 +22,19 @@ import zmq
 import zprocess.locking
 from zprocess.locking import set_default_timeout
 
-import shared_drive
+from . import shared_drive
 from labscript_utils.labconfig import LabConfig
 
 if 'h5py' in sys.modules:
     raise ImportError('h5_lock must be imported prior to importing h5py')
-        
+
 import h5py
 
 DEFAULT_TIMEOUT = 45
 
 def NetworkOnlyLock(name):
     return zprocess.locking.NetworkOnlyLock(shared_drive.path_to_agnostic(name))
-    
+
 def hack_locks_onto_h5py():
     def __init__(self, name, mode=None, driver=None, libver=None, **kwds):
         if not isinstance(name, h5py._objects.ObjectID):
@@ -55,10 +55,10 @@ def hack_locks_onto_h5py():
     # Replace the h5py File open and close methods with our own, brand
     # new shiny locking ones:
     h5py.File.__init__ = __init__
-    h5py.File.close = close 
+    h5py.File.close = close
 
 def connect_to_zlock_server():
-    # setup connection with the zprocess.locking server, depending on labconfig settings: 
+    # setup connection with the zprocess.locking server, depending on labconfig settings:
     config = LabConfig(required_params={'ports':['zlock'],'servers':['zlock']})
     host = config.get('servers','zlock')
     port = config.get('ports','zlock')

@@ -194,9 +194,7 @@ if __name__ == '__main__':
 
     # How to run a camera server:
 
-    port = 8765
+    port = 8675
     print('starting camera server on port %d...' % port)
     server = CameraServer(port)
     server.shutdown_on_interrupt()
-
-
