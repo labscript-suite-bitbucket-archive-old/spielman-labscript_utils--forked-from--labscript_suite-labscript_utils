@@ -11,7 +11,12 @@
 #                                                                   #
 #####################################################################
 
-import configparser
+# Support both python 2 and 3
+try: # python 3 version
+    import configparser
+except: # python 2 version
+    import ConfigParser as configparser
+    
 import os
 import socket
 
