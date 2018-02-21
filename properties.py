@@ -2,7 +2,7 @@ import sys
 import json
 import numpy as np
 
-JSON_IDENTIFIER = 'Content-Type: application/json '
+JSON_IDENTIFIER = b'Content-Type: application/json '
 
 VALID_PROPERTY_LOCATIONS = {
     "connection_table_properties",
@@ -61,8 +61,8 @@ def _get_device_properties(h5_file, device_name):
 
 def _get_con_table_properties(h5_file, device_name):
     dataset = h5_file['connection table']
-    row = dataset[dataset['name'] == device_name][0]
-    json_string = row['properties']
+    row = dataset[dataset['name'] == device_name.encode('utf-8')][0]
+    json_string = row['properties'].encode('utf-8')
     return deserialise(json_string)
 
 
