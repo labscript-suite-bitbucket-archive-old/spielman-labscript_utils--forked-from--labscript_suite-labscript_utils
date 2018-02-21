@@ -18,3 +18,4 @@ def ValidName(name, RaiseError=False):
 
         return False
     return True
+
