@@ -185,11 +185,10 @@ class SavedFunction(object):
         # Names mangled to reduce risk of colliding with the function
         # attempting to access global variables (which it shouldn't be doing):
         with h5py.File(self.h5_filename, "r") as h5_file:
-            sandbox_namespace = {'__h5s_file': h5_file,
-                                 '__h5s_function': self._function,
+            sandbox_namespace = {'__h5s_function': self._function,
                                  '__h5s_args': args,
                                  '__h5s_kwargs': kwargs}
-            exc_line = '__h5s_result = __h5s_function(__h5s_file, *__h5s_args, **__h5s_kwargs)'
+            exc_line = '__h5s_result = __h5s_function(*__h5s_args, **__h5s_kwargs)'
             exec_in_namespace(exc_line, sandbox_namespace)
             result = sandbox_namespace['__h5s_result']
         return result

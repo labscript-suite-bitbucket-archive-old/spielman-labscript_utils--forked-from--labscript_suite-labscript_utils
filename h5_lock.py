@@ -22,6 +22,9 @@ import zmq
 import zprocess.locking
 from zprocess.locking import set_default_timeout
 
+# Monkey patch zprocess.ZMQLockClient to have a longer response timeout:
+zprocess.locking.ZMQLockClient.RESPONSE_TIMEOUT = 10000 # ms
+
 from labscript_utils.shared_drive import path_to_agnostic
 from labscript_utils.labconfig import LabConfig
 
@@ -31,6 +34,7 @@ if 'h5py' in sys.modules:
 import h5py
 
 DEFAULT_TIMEOUT = 45
+RESPONSE_TIMEOUT = 10
 
 def NetworkOnlyLock(name):
     return zprocess.locking.NetworkOnlyLock(path_to_agnostic(name))
